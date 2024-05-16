@@ -1,14 +1,15 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import styles from './app.module.css';
+import {FC} from 'react';
+import Login from './pages/Login';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Register from './pages/Register';
 
-import NxWelcome from './nx-welcome';
+const App: FC = () => (
+	<BrowserRouter>
+		<Routes>
+			<Route path="/" element={<Login />} />
+			<Route path="/register" element={<Register />} />
+		</Routes>
+	</BrowserRouter>
+);
 
-export function App() {
-  return (
-    <div>
-      <NxWelcome title="frontend" />
-    </div>
-  );
-}
-
-export default App;
+export default App; 

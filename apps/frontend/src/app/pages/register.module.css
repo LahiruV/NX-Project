@@ -1,0 +1,18 @@
+.registerContainer {
+  display: flex;
+  height: 100vh;
+}
+
+.leftColumn,
+.rightColumn {
+  flex: 1;
+  height: 100%;
+}
+
+.leftColumn {
+  background-color: 'white'
+}
+
+.rightColumn {
+  background-color: 'white'
+}
