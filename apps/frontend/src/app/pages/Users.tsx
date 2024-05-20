@@ -69,7 +69,7 @@ const Users = () => {
         },
     ];
 
-    const getRowId = (row: any) => row._id; // Specify _id as the unique identifier
+    const getRowId = (row: any) => row._id; 
 
     return (
         <div style={{ height: 400, width: '100%' }}>
