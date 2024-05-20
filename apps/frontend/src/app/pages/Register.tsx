@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import styles from './register.module.css';
 import { TextField, Button, Container, Typography, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
+import { useMutation } from '@tanstack/react-query';
+import axios from 'axios';
 
 interface Props { }
 
@@ -11,6 +13,11 @@ interface User {
   phone: string;
   password: string;
 }
+
+const registerUser = async (userData: any) => {
+  const response = await axios.post('https://backend-test-qll5.onrender.com/user/register', userData);
+  return response.data;
+};
 
 const Register: React.FC<Props> = () => {
   const [user, setUser] = useState<User>({
@@ -42,6 +49,8 @@ const Register: React.FC<Props> = () => {
 
     if (!user.phone.trim()) {
       newErrors.phone = 'Please enter your phone number';
+    }else if (user.phone.length < 10) {
+      newErrors.phone = 'Phone Number Must be 10 digits';
     }
 
     if (!user.password.trim()) {
@@ -59,7 +68,7 @@ const Register: React.FC<Props> = () => {
     }
 
     if (Object.keys(newErrors).length === 0) {
-      console.log('Form submitted');
+      mutation.mutate(user);
     }
 
     setErrors(newErrors);
@@ -67,11 +76,37 @@ const Register: React.FC<Props> = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setUser(prevUser => ({
-      ...prevUser,
-      [name]: value
-    }));
+
+    if (name === 'phone') {
+      const cleanedValue = value.replace(/\D/g, '');
+      if (cleanedValue.length > 10) {
+        setUser(prevUser => ({
+          ...prevUser,
+          [name]: cleanedValue.slice(0, 10)
+        }));
+      } else {
+        setUser(prevUser => ({
+          ...prevUser,
+          [name]: cleanedValue
+        }));
+      }
+    } else {
+      setUser(prevUser => ({
+        ...prevUser,
+        [name]: value
+      }));
+    }
   };
+
+  const mutation = useMutation({
+    mutationFn: registerUser,
+    onSuccess: (data) => {
+      console.log('User registered successfully:', data);
+    },
+    onError: (error) => {
+      console.error('Error registering user:', error);
+    },
+  });
 
   return (
     <div className={styles.registerContainer}>
@@ -143,6 +178,9 @@ const Register: React.FC<Props> = () => {
                 onChange={handleChange}
                 error={!!errors.phone}
                 helperText={errors.phone}
+                inputProps={{
+                  maxLength: 10,
+                }}
               />
               <TextField
                 label="Password"
