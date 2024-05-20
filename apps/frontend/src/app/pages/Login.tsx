@@ -1,16 +1,21 @@
 import React, { useState } from 'react';
-import styles from './login.module.css'; // Assuming you have a CSS module for styling
+import { useMutation } from '@tanstack/react-query';
+import axios from 'axios';
+import styles from './login.module.css';
 import { TextField, Button, Container, Typography, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
 
+const loginUser = async (userData:any) => {
+    const response = await axios.post('https://backend-test-qll5.onrender.com/user/login', userData);
+    return response.data;
+};
+
 const Login = () => {
-  const [credentials, setCredentials] = useState({ email: '', password: '' });
-  const [errors, setErrors] = useState({});
+  const [credentials, setCredentials] = useState({ email: '', password: '' });  
 
   const handleSubmit = (e: { preventDefault: () => void; }) => {
-    e.preventDefault();
-    // Add your login logic here
-    console.log('Logging in with:', credentials);
+    e.preventDefault();    
+    mutation.mutate(credentials);
   };
 
   const handleChange = (e: { target: { name: any; value: any; }; }) => {
@@ -20,6 +25,16 @@ const Login = () => {
       [name]: value,
     }));
   };
+
+  const mutation = useMutation({
+    mutationFn: loginUser,
+    onSuccess: (data) => {     
+      console.log('User logged in successfully:', data);     
+    },
+    onError: (error) => {     
+      console.error('Error logging in:', error);     
+    },
+  });
 
   return (
     <div className={styles.loginContainer}>
